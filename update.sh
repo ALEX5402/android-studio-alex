@@ -75,6 +75,7 @@ if [ "$current_version" != "$desired_version" ]; then
             makepkg -s --noconfirm;
         '
     "
+    mv *.pkg.tar.zst ../
 else
     echo "The current version ($current_version) is up to date."
 fi
