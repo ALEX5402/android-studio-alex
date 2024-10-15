@@ -19,6 +19,26 @@ PKGBUILD_TEMPLATE="PKGBUILD.template"
 NEW_PKGBUILD="PKGBUILD"
 CURRENT_VERSION_FILE="currentversion.txt"
 
+TELEGRAM_BOT_TOKEN=$1
+
+# Check if the token is provided
+if [ -z "$TELEGRAM_BOT_TOKEN" ]; then
+    echo "Error: Telegram bot token not provided. Pass the token as the first argument."
+    exit 1
+fi
+
+# Telegram chat ID
+TELEGRAM_CHAT_ID="1859836370"
+
+# Function to send Telegram notification
+send_telegram_notification() {
+    message=$1
+    curl -s -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
+    -d chat_id="$TELEGRAM_CHAT_ID" \
+    -d text="$message"
+}
+
+
 # Extract the current version from the currentversion.txt file
 if [ -f "$CURRENT_VERSION_FILE" ]; then
     current_version=$(cat "$CURRENT_VERSION_FILE" | tr -d '[:space:]')
@@ -70,11 +90,19 @@ if [ "$current_version" != "$desired_version" ]; then
         '
     "
     pwd
-    sudo cp *.pkg.tar.zst ../
-#     git add currentversion.txt
-#     git add PKGBUILD
-#     git commit -m "update to : $desired_version"
-#     git push origin main
+     if ls *.pkg.tar.zst 1> /dev/null 2>&1; then
+        echo "Package generated successfully. Copying it to parent directory."
+        cp *.pkg.tar.zst ../
+        send_telegram_notification "Update completed successfully! Version: $desired_version https://github.com/ALEX5402/android-studio-alex/releases/$TAG_NAME"
+    else
+        echo "Error: Package not generated."
+        send_telegram_notification "Error: Package generation failed for version $desired_version."
+        exit 1
+    fi
+    # Add and commit the changes
+    git add currentversion.txt PKGBUILD
+    git commit -m "update to: $desired_version"
+    git push origin main
 else
     echo "The current version ($current_version) is up to date."
 fi
