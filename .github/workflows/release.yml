@@ -1,4 +1,4 @@
-name: auto-build
+name: auto-update
 
 on:
   push:
@@ -6,6 +6,8 @@ on:
       - "*"
   schedule:
       - cron: "0 3 * * *"  # This is 9 AM IST (India Standard Time, UTC+5:30)
+  workflow_dispatch:
+
 
 permissions:
   contents: write
