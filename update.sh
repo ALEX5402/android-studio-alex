@@ -46,12 +46,6 @@ if [ "$current_version" != "$desired_version" ]; then
     git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
 
     generate_pkgbuild
-    # Create and push a Git tag
-    # git tag "$TAG_NAME"
-    git add currentversion.txt
-    git add PKGBUILD
-    git commit -m "update to : $desired_version"
-    git push origin main
 
     # Generate a new PKGBUILD file with the new version and sha256
 
@@ -75,7 +69,12 @@ if [ "$current_version" != "$desired_version" ]; then
             makepkg -s --noconfirm;
         '
     "
-    mv *.pkg.tar.zst ../
+    pwd
+    sudo mv *.pkg.tar.zst ../
+    git add currentversion.txt
+    git add PKGBUILD
+    git commit -m "update to : $desired_version"
+    git push origin main
 else
     echo "The current version ($current_version) is up to date."
 fi
