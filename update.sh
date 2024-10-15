@@ -13,24 +13,27 @@ python_output=$(python main.py)
 desired_version=$(echo "$python_output" | grep -Po '"version":.*?[^\\]",' | sed 's/"version"://g' | tr -d '", ')
 desired_sha256=$(echo "$python_output" | grep -Po '"sha256":.*?[^\\]",' | sed 's/"sha256"://g' | tr -d '", ')
 
-# Define the PKGBUILD file
-PKGBUILD_FILE="PKGBUILD"
+# Define template and output files
+PKGBUILD_TEMPLATE="PKGBUILD.template"
+NEW_PKGBUILD="PKGBUILD"
+CURRENT_VERSION_FILE="currentversion.txt"
 
-# Extract the current version from the PKGBUILD file
-current_version=$(grep "^pkgver=" "$PKGBUILD_FILE" | cut -d'=' -f2)
+# Extract the current version from the currentversion.txt file
+if [ -f "$CURRENT_VERSION_FILE" ]; then
+    current_version=$(cat "$CURRENT_VERSION_FILE" | tr -d '[:space:]')
+else
+    echo "currentversion.txt not found. Assuming no current version."
+    current_version=""
+fi
 
-# Function to update the PKGBUILD version and sha256
-update_pkgbuild() {
-    echo "Updating PKGBUILD to version $desired_version with sha256 $desired_sha256"
-    sed -i "s/^pkgver=.*/pkgver=$desired_version/" "$PKGBUILD_FILE"
-    sed -i "s/sha256sums=('.*'/sha256sums=('$desired_sha256'/" "$PKGBUILD_FILE"
-    git add "$PKGBUILD_FILE"
-    git commit -m "Updated to version : $desired_version"
-    git push origin main
+# Function to generate a new PKGBUILD file with updated version and sha256
+generate_pkgbuild() {
+    echo "Generating a new PKGBUILD with version $desired_version and sha256 $desired_sha256"
+    sed "s/{VERSION}/$desired_version/g; s/{SHA256}/$desired_sha256/g" "$PKGBUILD_TEMPLATE" > "$NEW_PKGBUILD"
 }
 
 # Compare current and desired versions
-if [ "$(printf '%s\n' "$desired_version" "$current_version" | sort -V | head -n1)" != "$desired_version" ]; then
+if [ "$current_version" != "$desired_version" ]; then
     echo "The current version ($current_version) is lower than $desired_version."
 
     # Set the tag name for GitHub environment (for actions)
@@ -43,9 +46,15 @@ if [ "$(printf '%s\n' "$desired_version" "$current_version" | sort -V | head -n1
 
     # Create and push a Git tag
     git tag "$TAG_NAME"
+    git add currentversion.txt
+    git add PKGBUILD
+    git commit -m "update to : $desired_version"
+    git push origin main
 
-    # Update the PKGBUILD file with the new version and sha256
-    update_pkgbuild
+    # Generate a new PKGBUILD file with the new version and sha256
+    generate_pkgbuild
+    #update current version
+    echo "$desired_version" > currentversion.txt
 
     # Run the build inside a Docker container with Arch Linux
     docker run --rm \
@@ -67,11 +76,6 @@ if [ "$(printf '%s\n' "$desired_version" "$current_version" | sort -V | head -n1
             makepkg -s --noconfirm;
         '
     "
-
 else
     echo "The current version ($current_version) is up to date."
 fi
-
-
-
-

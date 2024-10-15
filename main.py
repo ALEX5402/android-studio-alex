@@ -2,9 +2,6 @@ import subprocess
 from bs4 import BeautifulSoup
 import json
 
-# Step 1: Run wget to download the HTML file and suppress output
-wget_command = ["wget", "https://developer.android.com/studio", "-O", "studio.html"]
-subprocess.run(wget_command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
 with open("studio.html", "r", encoding="utf-8") as file:
     page_content = file.read()
 soup = BeautifulSoup(page_content, 'html.parser')

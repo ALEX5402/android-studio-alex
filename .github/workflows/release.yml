@@ -20,6 +20,7 @@ jobs:
         run: |
            git clone https://"alex5402":"${{ secrets.GITHUBTOKEN }}"@github.com/alex5402/android-studio-alex
            cd android-studio-alex
+           wget https://developer.android.com/studio -O studio.html
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
