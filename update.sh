@@ -38,7 +38,6 @@ generate_pkgbuild() {
 if [ "$current_version" != "$desired_version" ]; then
     echo "The current version ($current_version) is lower than $desired_version."
 
-    Set the tag name for GitHub environment (for actions)
     TAG_NAME=$(git show -s --format=%B HEAD | sed 's/[ \/]*//g')
     echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
 
