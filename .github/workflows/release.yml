@@ -4,12 +4,8 @@ on:
   push:
     branches:
       - "*"
-       schedule:
-    # Runs every day at 9 AM UTC (adjust to your timezone if needed)
+  schedule:
       - cron: "0 3 * * *"  # This is 9 AM IST (India Standard Time, UTC+5:30)
-
-    # Runs every 9 hours
-      - cron: "0 */5 * * *"
 
 permissions:
   contents: write
