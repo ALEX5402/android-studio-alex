@@ -69,7 +69,10 @@ if [ "$current_version" != "$desired_version" ]; then
 
     # Generate a new PKGBUILD file with the new version and sha256
     mkdir temp
-    mv PKGBUILD temp
+    cp PKGBUILD temp
+    cp android-studio-alex.desktop temp
+    cp license.html temp
+
     cd temp
     # Run the build inside a Docker container with Arch Linux
     docker run --rm \
