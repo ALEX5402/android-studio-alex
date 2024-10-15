@@ -70,11 +70,11 @@ if [ "$current_version" != "$desired_version" ]; then
         '
     "
     pwd
-    sudo mv *.pkg.tar.zst ../
-    git add currentversion.txt
-    git add PKGBUILD
-    git commit -m "update to : $desired_version"
-    git push origin main
+    sudo cp *.pkg.tar.zst ../
+#     git add currentversion.txt
+#     git add PKGBUILD
+#     git commit -m "update to : $desired_version"
+#     git push origin main
 else
     echo "The current version ($current_version) is up to date."
 fi
