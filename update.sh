@@ -10,9 +10,10 @@ pip install -r requirements.txt
 python_output=$(python main.py)
 
 # Extract desired version and sha256 from the Python output
-desired_version=$(echo "$python_output" | grep -Po '"version":.*?[^\\]",' | sed 's/"version"://g' | tr -d '", ')
-desired_sha256=$(echo "$python_output" | grep -Po '"sha256":.*?[^\\]",' | sed 's/"sha256"://g' | tr -d '", ')
+desired_version=$(echo "$python_output" | jq -r '.version')
+desired_sha256=$(echo "$python_output" | jq -r '.sha256')
 
+echo "$desired_sha256"
 # Define template and output files
 PKGBUILD_TEMPLATE="PKGBUILD.template"
 NEW_PKGBUILD="PKGBUILD"
@@ -30,13 +31,14 @@ fi
 generate_pkgbuild() {
     echo "Generating a new PKGBUILD with version $desired_version and sha256 $desired_sha256"
     sed "s/{VERSION}/$desired_version/g; s/{SHA256}/$desired_sha256/g" "$PKGBUILD_TEMPLATE" > "$NEW_PKGBUILD"
+    echo "$desired_version" > currentversion.txt
 }
 
 # Compare current and desired versions
 if [ "$current_version" != "$desired_version" ]; then
     echo "The current version ($current_version) is lower than $desired_version."
 
-    # Set the tag name for GitHub environment (for actions)
+    Set the tag name for GitHub environment (for actions)
     TAG_NAME=$(git show -s --format=%B HEAD | sed 's/[ \/]*//g')
     echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
 
@@ -44,17 +46,15 @@ if [ "$current_version" != "$desired_version" ]; then
     git config --global user.name "${GITHUB_ACTOR}"
     git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
 
+    generate_pkgbuild
     # Create and push a Git tag
-    git tag "$TAG_NAME"
+    # git tag "$TAG_NAME"
     git add currentversion.txt
     git add PKGBUILD
     git commit -m "update to : $desired_version"
     git push origin main
 
     # Generate a new PKGBUILD file with the new version and sha256
-    generate_pkgbuild
-    #update current version
-    echo "$desired_version" > currentversion.txt
 
     # Run the build inside a Docker container with Arch Linux
     docker run --rm \
