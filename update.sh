@@ -92,7 +92,7 @@ if [ "$current_version" != "$desired_version" ]; then
     pwd
      if ls *.pkg.tar.zst 1> /dev/null 2>&1; then
         echo "Package generated successfully. Copying it to parent directory."
-        cp *.pkg.tar.zst ../
+        sudo cp *.pkg.tar.zst ../
         send_telegram_notification "Update completed successfully! Version: $desired_version https://github.com/ALEX5402/android-studio-alex/releases/$TAG_NAME"
     else
         echo "Error: Package not generated."
