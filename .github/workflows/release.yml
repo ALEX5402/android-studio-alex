@@ -1,9 +1,6 @@
 name: auto-update
 
 on:
-  push:
-    branches:
-      - "*"
   schedule:
       - cron: "0 3 * * *"  # This is 9 AM IST (India Standard Time, UTC+5:30)
   workflow_dispatch:
