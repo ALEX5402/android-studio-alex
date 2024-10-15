@@ -57,6 +57,9 @@ generate_pkgbuild() {
 # Compare current and desired versions
 if [ "$current_version" != "$desired_version" ]; then
     echo "The current version ($current_version) is lower than $desired_version."
+    generate_pkgbuild
+    git add currentversion.txt PKGBUILD
+    git commit -m "update to: $desired_version"
 
     TAG_NAME=$(git show -s --format=%B HEAD | sed 's/[ \/]*//g')
     echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
@@ -64,8 +67,6 @@ if [ "$current_version" != "$desired_version" ]; then
     # Set up git configuration
     git config --global user.name "${GITHUB_ACTOR}"
     git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
-
-    generate_pkgbuild
 
     # Generate a new PKGBUILD file with the new version and sha256
     mkdir temp
@@ -107,8 +108,6 @@ if [ "$current_version" != "$desired_version" ]; then
     fi
     cd ..
     # Add and commit the changes
-    git add currentversion.txt PKGBUILD
-    git commit -m "update to: $desired_version"
     git push origin main
 else
     echo "The current version ($current_version) is up to date."
