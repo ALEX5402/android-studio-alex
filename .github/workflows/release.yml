@@ -31,7 +31,7 @@ jobs:
            git clone https://"alex5402":"${{ secrets.GITHUBTOKEN }}"@github.com/alex5402/android-studio-alex build
            cd build
            wget https://developer.android.com/studio -O studio.html
-           bash update.sh ${{ secrets.BOTTOKEN$ }}
+           bash update.sh ${{ secrets.BOTTOKEN }}
 
 
       - name: Release
