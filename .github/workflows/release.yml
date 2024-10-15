@@ -38,4 +38,4 @@ jobs:
           release_name: ${{ env.TAG_NAME }}
           body: Workflow Hash ```${{ github.sha }}```
           files: |
-            build/*.pkg.tar.zst
+            *.pkg.tar.zst

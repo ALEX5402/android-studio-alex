@@ -68,7 +68,9 @@ if [ "$current_version" != "$desired_version" ]; then
     generate_pkgbuild
 
     # Generate a new PKGBUILD file with the new version and sha256
-
+    mkdir temp
+    mv PKGBUILD temp
+    cd temp
     # Run the build inside a Docker container with Arch Linux
     docker run --rm \
         -v $(pwd):/workspace -w /workspace archlinux:latest bash -c "
@@ -92,6 +94,7 @@ if [ "$current_version" != "$desired_version" ]; then
     pwd
      if ls *.pkg.tar.zst 1> /dev/null 2>&1; then
         echo "Package generated successfully. Copying it to parent directory."
+        sudo cp *.pkg.tar.zst ../../
         # Ensure builder user owns the workspace
         send_telegram_notification "New Android Studio Version: $desired_version https://github.com/ALEX5402/android-studio-alex/releases/download/ci/$TAG_NAME/android-studio-alex-$desired_version-x86_64.pkg.tar.zst"
     else
