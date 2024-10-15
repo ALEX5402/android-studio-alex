@@ -1,5 +1,5 @@
 pkgname=android-studio-alex
-pkgver=2024.2.1.10
+pkgver=2024.2.1.9
 pkgrel=1
 pkgdesc="The official Android IDE (Stable branch)"
 arch=('i686' 'x86_64')
