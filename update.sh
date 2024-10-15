@@ -105,6 +105,7 @@ if [ "$current_version" != "$desired_version" ]; then
         send_telegram_notification "Error: Package generation failed for version $desired_version."
         exit 1
     fi
+    cd ..
     # Add and commit the changes
     git add currentversion.txt PKGBUILD
     git commit -m "update to: $desired_version"
