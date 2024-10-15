@@ -3,6 +3,9 @@ name: auto-update
 on:
   schedule:
       - cron: "0 3 * * *"  # This is 9 AM IST (India Standard Time, UTC+5:30)
+        # Runs every 9 hours
+      - cron: "0 */9 * * *"
+
   workflow_dispatch:
 
 
