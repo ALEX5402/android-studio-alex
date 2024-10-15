@@ -99,7 +99,7 @@ if [ "$current_version" != "$desired_version" ]; then
         echo "Package generated successfully. Copying it to parent directory."
         sudo cp *.pkg.tar.zst ../../
         # Ensure builder user owns the workspace
-        send_telegram_notification "New Android Studio Version: $desired_version https://github.com/ALEX5402/android-studio-alex/releases/download/ci/$TAG_NAME/android-studio-alex-$desired_version-x86_64.pkg.tar.zst"
+        send_telegram_notification "New Android Studio Version: $desired_version https://github.com/ALEX5402/android-studio-alex/releases/download/$TAG_NAME/android-studio-alex-$desired_version-x86_64.pkg.tar.zst"
     else
         echo "Error: Package not generated."
         send_telegram_notification "Error: Package generation failed for version $desired_version."
